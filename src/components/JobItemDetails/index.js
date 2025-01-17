@@ -1,15 +1,17 @@
-import {Component} from 'react'
+import {useState,useEffect} from 'react'
 import Cookies from 'js-cookie'
 import {AiFillStar} from 'react-icons/ai'
 import {GoLocation} from 'react-icons/go'
 import {BsBriefcaseFill} from 'react-icons/bs'
 import {BiLinkExternal} from 'react-icons/bi'
-import Loader from 'react-loader-spinner'
-
+import {Puff} from 'react-loader-spinner'
+import {useParams} from 'react-router'
 import SkillsCard from '../SkillCard'
 import Header from '../Header'
 import SimilarJobItem from '../SimilarJobItem'
+
 import './index.css'
+
 
 const apiStatusConstants = {
   initial: 'INITIAL',
@@ -18,18 +20,20 @@ const apiStatusConstants = {
   failure: 'FAILURE',
 }
 
-class JobItemDetails extends Component {
-  state = {
-    jobItemList: {},
-    similarJobItemList: [],
-    apiStatus: apiStatusConstants.initial,
-  }
+const JobItemDetails =()=> {
+  const {id}=useParams()
+  
+ 
+const [jobItemList,setJobItemList]=useState({})
+const [similarJobItemList,setSimilarJobItemList]=useState([])
+const [apiStatus,setApiStatus]=useState(apiStatusConstants.initial)
+  
+  
+  useEffect(()=> {
+    getJobItem()
+  },[id])
 
-  componentDidMount() {
-    this.getJobItem()
-  }
-
-  getFormattedSkillData = data => ({
+  const getFormattedSkillData = data => ({
     companyLogoUrl: data.company_logo_url,
     employmentType: data.employment_type,
     jobDescription: data.job_description,
@@ -39,7 +43,7 @@ class JobItemDetails extends Component {
     title: data.title,
   })
 
-  getFormattedData = data => ({
+  const getFormattedData = data => ({
     companyLogoUrl: data.company_logo_url,
     companyWebsiteUrl: data.company_website_url,
     employmentType: data.employment_type,
@@ -59,13 +63,26 @@ class JobItemDetails extends Component {
     })),
   })
 
-  getJobItem = async () => {
-    this.setState({
-      apiStatus: apiStatusConstants.inProgress,
-    })
-    const {match} = this.props
-    const {params} = match
-    const {id} = params
+ const getJobItem = async () => {
+  
+
+    
+ setApiStatus(apiStatusConstants.inProgress)
+    // this.setState({
+    //   apiStatus: apiStatusConstants.inProgress,
+    // })
+   
+//     const { match } = this.props
+//      const {params}=match
+//     const { userId } =params
+//     console.log(userId)
+   
+  
+
+    
+    
+   
+// console.log(this.props)
 
     const jwtToken = Cookies.get('jwt_token')
     const url = `https://apis.ccbp.in/jobs/${id}`
@@ -78,26 +95,31 @@ class JobItemDetails extends Component {
     const response = await fetch(url, options)
     if (response.ok === true) {
       const data = await response.json()
-      const updatedData = this.getFormattedData(data.job_details)
+      const updatedData = getFormattedData(data.job_details)
       const updatedSkillData = data.similar_jobs.map(eachSimilarJob =>
-        this.getFormattedSkillData(eachSimilarJob),
+        getFormattedSkillData(eachSimilarJob),
       )
-      console.log(updatedData)
-      console.log(updatedSkillData)
-      this.setState({
-        jobItemList: updatedData,
-        similarJobItemList: updatedSkillData,
-        apiStatus: apiStatusConstants.success,
-      })
+      // console.log(updatedData)
+      // console.log(updatedSkillData)
+      setJobItemList(updatedData)
+      setSimilarJobItemList(updatedSkillData)
+      setApiStatus(apiStatusConstants.success)
+      // this.setState({
+      //   jobItemList: updatedData,
+      //   similarJobItemList: updatedSkillData,
+      //   apiStatus: apiStatusConstants.success,
+      // })
     } else {
-      this.setState({
-        apiStatus: apiStatusConstants.failure,
-      })
+      setApiStatus(apiStatusConstants.failure)
+      // this.setState({
+      //   apiStatus: apiStatusConstants.failure,
+      // })
     }
   }
 
-  renderJobItemDetails = () => {
-    const {jobItemList, similarJobItemList} = this.state
+
+  const renderJobItemDetails = () => {
+    // const {jobItemList, similarJobItemList} = this.state
     const {
       companyLogoUrl,
       companyWebsiteUrl,
@@ -177,7 +199,7 @@ class JobItemDetails extends Component {
     )
   }
 
-  renderFailureView = () => (
+  const renderFailureView = () => (
     <div className="render-loading-view">
       <img
         src="https://assets.ccbp.in/frontend/react-js/failure-img.png"
@@ -192,44 +214,46 @@ class JobItemDetails extends Component {
         type="button"
         testid="button"
         className="job-item-failure-button"
-        onClick={this.getJobItem}
+        onClick={getJobItem}
       >
         Retry
       </button>
     </div>
   )
 
-  renderLoadingView = () => (
+  const renderLoadingView = () => (
     <div className="profile-loader-container" testid="loader">
-      <Loader type="ThreeDots" color="#ffffff" height="50" width="50" />
+      <Puff type="ThreeDots" color="#ffffff" height="50" width="50" />
     </div>
   )
 
-  renderJobViews = () => {
-    const {apiStatus} = this.state
+  const renderJobViews = () => {
+    // const {apiStatus} = this.state
 
     switch (apiStatus) {
       case apiStatusConstants.success:
-        return this.renderJobItemDetails()
+        return renderJobItemDetails()
       case apiStatusConstants.inProgress:
-        return this.renderLoadingView()
+        return renderLoadingView()
       case apiStatusConstants.failure:
-        return this.renderFailureView()
+        return renderFailureView()
       default:
         return null
     }
   }
 
-  render() {
+ 
+
+  
     return (
       <>
         <Header />
-        <div className="get-products-details-container">
-          {this.renderJobViews()}
+        <div className="get-products-details-container" >
+          {renderJobViews()}
         </div>
       </>
     )
   }
-}
+
 
 export default JobItemDetails

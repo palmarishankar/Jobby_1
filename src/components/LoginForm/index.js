@@ -1,34 +1,46 @@
-import {Component} from 'react'
+import React,{ useState} from 'react'
 import Cookies from 'js-cookie'
-import {Redirect} from 'react-router-dom'
+import {useNavigate,Navigate} from 'react-router'
 
 import './index.css'
+const LoginForm=()=>{
+  const navigate=useNavigate();
+// class LoginForm extends Component {
+  const[username,setUserName]=useState('')
+  const[password,setUserPassword]=useState('')
+  const[showSubmitError,setError]=useState(false)
+  const[errorMsg,setErrorMsg,]=useState('')
+  // state = {
+  //   username: '',
+  //   password: '',
+  //   showSubmitError: false,
+  //   errorMsg: '',
+  // }
+  
 
-class LoginForm extends Component {
-  state = {
-    username: '',
-    password: '',
-    showSubmitError: false,
-    errorMsg: '',
-  }
-
-  onSubmitSuccess = jwtToken => {
-    const {history} = this.props
-    console.log(history)
+  const onSubmitSuccess = jwtToken => {
+    // const {history} = this.props
+    // console.log(this.props)
+    // console.log(history)
+    
     Cookies.set('jwt_token', jwtToken, {
       expires: 30,
       path: '/',
     })
-    history.replace('/')
+    navigate("/",{replace:true})
+    // history.replace('/')
+    // return <Navigate to="/" replace/>
   }
 
-  onSubmitFailure = errorMsg => {
-    this.setState({showSubmitError: true, errorMsg})
+  const onSubmitFailure = errorMsg => {
+    setErrorMsg(errorMsg)
+    setError(true)
+    // this.setState({showSubmitError: true, errorMsg})
   }
 
-  onSubmitForm = async event => {
+  const onSubmitForm = async event => {
     event.preventDefault()
-    const {username, password} = this.state
+    // const {username, password} = this.state
     const userDetails = {username, password}
     const url = 'https://apis.ccbp.in/login'
     const options = {
@@ -38,24 +50,23 @@ class LoginForm extends Component {
     const response = await fetch(url, options)
     const data = await response.json()
     if (response.ok === true) {
-      this.onSubmitSuccess(data.jwt_token)
+      onSubmitSuccess(data.jwt_token)
     } else {
-      this.onSubmitFailure(data.error_msg)
+      onSubmitFailure(data.error_msg)
     }
   }
 
-  onEnterUsername = event => {
-    this.setState({username: event.target.value})
+  const onEnterUsername = event => setUserName(event.target.value)
+
+
+  const onChangePassword = event => {
+    setUserPassword(event.target.value)
   }
 
-  onChangePassword = event => {
-    this.setState({password: event.target.value})
-  }
+  const renderUsername = () => (
+    // const {username} = this.state
 
-  renderUsername = () => {
-    const {username} = this.state
-
-    return (
+    // return (
       <>
         <label className="label" htmlFor="userName">
           USERNAME
@@ -66,16 +77,16 @@ class LoginForm extends Component {
           placeholder="Username"
           className="user-input"
           value={username}
-          onChange={this.onEnterUsername}
+          onChange={onEnterUsername}
         />
       </>
-    )
-  }
+    // )
+  )
 
-  renderPassword = () => {
-    const {password} = this.state
+  const renderPassword = () => (
+    // const {password} = this.state
 
-    return (
+    // return (
       <>
         <label className="label" htmlFor="password">
           Password
@@ -86,17 +97,17 @@ class LoginForm extends Component {
           type="password"
           placeholder="Password"
           value={password}
-          onChange={this.onChangePassword}
+          onChange={onChangePassword}
         />
       </>
-    )
-  }
+    // )
+  )
 
-  render() {
-    const {showSubmitError, errorMsg} = this.state
+  // render() {
+    // const {showSubmitError, errorMsg} = this.state
     const jwtToken = Cookies.get('jwt_token')
     if (jwtToken !== undefined) {
-      return <Redirect to="/" />
+      return <Navigate to="/" />
     }
 
     return (
@@ -107,9 +118,9 @@ class LoginForm extends Component {
             alt="website logo"
             className="website-logo"
           />
-          <form className="form-container" onSubmit={this.onSubmitForm}>
-            <div className="input-container">{this.renderUsername()}</div>
-            <div className="input-container">{this.renderPassword()}</div>
+          <form className="form-container" onSubmit={onSubmitForm}>
+            <div className="input-container">{renderUsername()}</div>
+            <div className="input-container">{renderPassword()}</div>
             <button className="login-button" type="submit">
               Login
             </button>
@@ -119,6 +130,6 @@ class LoginForm extends Component {
       </div>
     )
   }
-}
+// }
 
 export default LoginForm

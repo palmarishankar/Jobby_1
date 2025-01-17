@@ -1,14 +1,13 @@
-import {Switch, Route, Redirect} from 'react-router-dom'
-
+import {BrowserRouter as Router, Route, Routes} from "react-router"
 import Login from './components/LoginForm'
 import Home from './components/Home'
 import Jobs from './components/Jobs'
-import JobItem from './components/JobItemDetails'
+//shankar
 import JobSalary from './components/JobsFilterGroup'
-import ProtectedRoute from './components/ProtectedRoute'
 import NotFound from './components/NotFound'
 
 import './App.css'
+import JobItemDetails from "./components/JobItemDetails"
 
 const employmentTypesList = [
   {
@@ -49,33 +48,35 @@ const salaryRangesList = [
 ]
 
 const App = () => (
-  <>
-    <Switch>
-      <Route exact path="/login" component={Login} />
-      <ProtectedRoute exact path="/" component={Home} />
-      <ProtectedRoute
+  <Router>
+    <Routes>
+      <Route exact path="/login" element={<Login/>} />
+      <Route exact path="/" element={<Home/>} /> 
+
+      <Route
         exact
         path="/jobs"
-        component={Jobs}
-        employmentDetails={employmentTypesList}
+        element={<Jobs/>}
+        employmentDetails={employmentTypesList} 
       />
-      <ProtectedRoute
+
+      <Route path="/jobs/:id"
         employmentDetails={employmentTypesList}
-        component={JobItem}
+        element={<JobItemDetails/>}
       />
-      <div>
+      
         {salaryRangesList.map(eachSalary => (
-          <ProtectedRoute
+          <Route
             eachSalary={eachSalary}
             key={eachSalary.salaryRangeId}
-            component={JobSalary}
+            element={<JobSalary/>}
           />
         ))}
-      </div>
-      <Route path="/not-found" component={NotFound} />
-      <Redirect to="/not-found" />
-    </Switch>
-  </>
+      
+      <Route path="/not-found" element={<NotFound/>} />
+  </Routes>
+  </Router>
+ 
 )
 
 export default App

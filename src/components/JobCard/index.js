@@ -1,7 +1,8 @@
 import {AiFillStar} from 'react-icons/ai'
-import {Link} from 'react-router-dom'
+import {Link,useParams} from 'react-router'
 import {HiLocationMarker, HiMail} from 'react-icons/hi'
 import './index.css'
+import JobItemDetails from '../JobItemDetails'
 
 const JobCard = props => {
   const {jobDetails} = props
@@ -15,9 +16,12 @@ const JobCard = props => {
     packagePerAnnum,
     jobDescription,
   } = jobDetails
+  const params=useParams()
+ 
 
   return (
-    <Link to={`/jobs/${id}`} className="link-item">
+    <div >
+    <Link to={`/jobs/${id}`} className="link-item" >
       <li className="job-list-items">
         <div className="company-container">
           <div>
@@ -51,6 +55,8 @@ const JobCard = props => {
         <p className="job-description">{jobDescription}</p>
       </li>
     </Link>
+   
+    </div>
   )
 }
 

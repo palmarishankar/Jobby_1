@@ -1,9 +1,11 @@
 import {Component} from 'react'
-import Loader from 'react-loader-spinner'
+import {Puff} from 'react-loader-spinner'
 import {BsSearch} from 'react-icons/bs'
 import Cookies from 'js-cookie'
 import JobCard from '../JobCard'
 import JobsFilterGroup from '../JobsFilterGroup'
+
+
 import './index.css'
 
 const employmentTypesList = [
@@ -68,7 +70,7 @@ class JobProfileSection extends Component {
     this.setState({
       apiStatus: apiStatusConstants.inProgress,
     })
-
+   
     const jwtToken = Cookies.get('jwt_token')
     const {salaryRange, employmentType, searchInput} = this.state
     const url = `https://apis.ccbp.in/jobs?employment_type=${employmentType.join()}&minimum_package=${salaryRange}&search=${searchInput}`
@@ -81,7 +83,7 @@ class JobProfileSection extends Component {
     const response = await fetch(url, options)
     if (response.ok === true) {
       const data = await response.json()
-      console.log(data)
+      // console.log(data)
       const updatedData = data.jobs.map(eachJob => ({
         companyLogoUrl: eachJob.company_logo_url,
         employmentType: eachJob.employment_type,
@@ -211,10 +213,12 @@ class JobProfileSection extends Component {
 
   renderLoadingView = () => (
     <div className="profile-loader-container" testid="loader">
-      <Loader type="ThreeDots" color="#ffffff" height="50" width="50" />
+      <Puff type="ThreeDots" color="#ffffff" height="50" width="50" />
     </div>
   )
-
+getSimilarJobs=()=>{
+  console.log("hello")
+}
   renderJobProfileDetailsList = () => {
     const {apiStatus} = this.state
 
@@ -245,7 +249,7 @@ class JobProfileSection extends Component {
             getJobDetails={this.getJobDetails}
           />
         </div>
-        <div className="responsive-items">
+        <div className="responsive-items" onClick={this.getSimilarJobs}>
           {this.renderJobProfileDetailsList()}
         </div>
       </div>

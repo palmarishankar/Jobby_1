@@ -1,5 +1,5 @@
 import {Component} from 'react'
-import Loader from 'react-loader-spinner'
+import {Puff} from 'react-loader-spinner'
 import Cookies from 'js-cookie'
 import './index.css'
 
@@ -63,7 +63,7 @@ class ProfileDetails extends Component {
 
   renderLoadingView = () => (
     <div className="profile-loader-container" testid="loader">
-      <Loader type="ThreeDots" color="#ffffff" height="50" width="50" />
+      <Puff type="ThreeDots" color="#ffffff" height="50" width="50" />
     </div>
   )
 
