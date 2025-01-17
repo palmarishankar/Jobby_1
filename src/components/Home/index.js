@@ -1,13 +1,15 @@
 import Cookies from 'js-cookie'
-import {Redirect, Link} from 'react-router-dom'
+import {Navigate, Link} from 'react-router'
 import Header from '../Header'
 
 import './index.css'
 
-const Home = () => {
+const Home = props => {
+  const {history}=props
+  console.log(history)
   const jwtToken = Cookies.get('jwt_token')
   if (jwtToken === undefined) {
-    return <Redirect to="/login" />
+    return <Navigate to="/login" replace />
   }
 
   return (

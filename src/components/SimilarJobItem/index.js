@@ -5,6 +5,7 @@ import './index.css'
 
 const SimilarJobItem = props => {
   const {jobDetails} = props
+  
   const {
     companyLogoUrl,
     employmentType,
